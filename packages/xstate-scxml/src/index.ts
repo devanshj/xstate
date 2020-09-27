@@ -36,7 +36,7 @@ function actionToSCXML(action: ActionObject<any, any>): XMLElement {
     return {
       type: 'element',
       name,
-      attributes
+      attributes: attributes as Record<string, any>
     };
   }
 

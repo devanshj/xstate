@@ -145,7 +145,7 @@ export function toActivityDefinition<TContext, TEvent extends EventObject>(
   const actionObject = toActionObject(action);
 
   return {
-    id: isString(action) ? action : actionObject.id,
+    id: isString(action) ? action : (actionObject as any).id,
     ...actionObject,
     type: actionObject.type
   };
@@ -572,20 +572,25 @@ export function resolveActions<TContext, TEvent extends EventObject>(
         case actionTypes.raise:
           return resolveRaise(actionObject as RaiseAction<TEvent>);
         case actionTypes.send:
+          const refinedActionObject = actionObject as SendAction<
+            TContext,
+            TEvent,
+            AnyEventObject
+          >;
           const sendAction = resolveSend(
-            actionObject as SendAction<TContext, TEvent, AnyEventObject>,
+            refinedActionObject,
             updatedContext,
             _event,
             machine.options.delays
-          ) as ActionObject<TContext, TEvent>; // TODO: fix ActionTypes.Init
+          );
 
           if (!IS_PRODUCTION) {
             // warn after resolving as we can create better contextual message here
             warn(
-              !isString(actionObject.delay) ||
+              !isString(refinedActionObject.delay) ||
                 typeof sendAction.delay === 'number',
               // tslint:disable-next-line:max-line-length
-              `No delay reference for delay expression '${actionObject.delay}' was found on machine '${machine.id}'`
+              `No delay reference for delay expression '${refinedActionObject.delay}' was found on machine '${machine.id}'`
             );
           }
 

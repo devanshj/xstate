@@ -22,11 +22,13 @@ export function each<TContext, TEvent extends EventObject>(
   const actions = maybeActions || indexOrActions;
   const index = maybeActions ? indexOrActions : undefined;
 
-  return {
+  const action = {
     type: 'xstate.foreach',
     collection,
     item,
     index,
     actions
   };
+
+  return action;
 }
