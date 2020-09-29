@@ -224,6 +224,40 @@ describe('assign', () => {
       maybe: 'defined'
     });
   });
+
+  it('infers context', () => {
+    interface Ctx {
+      foo?: number;
+    }
+    Machine<Ctx>({
+      context: {},
+      initial: 'a',
+      states: {
+        a: {
+          entry: [
+            assign({
+              // @ts-expect-error
+              foo: '1'
+            }),
+            assign({
+              // @ts-expect-error
+              bar: 'lol'
+            }),
+            assign({
+              foo: 1
+            }),
+            assign<Ctx>({
+              foo: 1
+            }),
+            // @ts-expect-error
+            assign<{ lol: string }>({
+              lol: ''
+            })
+          ]
+        }
+      }
+    });
+  });
 });
 
 describe('assign meta', () => {

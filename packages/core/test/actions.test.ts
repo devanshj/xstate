@@ -1353,6 +1353,42 @@ describe('choose', () => {
 
     expect(service.state.context).toEqual({ answer: 42 });
   });
+
+  it('works with assign to infer context', () => {
+    interface Ctx {
+      foo?: number;
+    }
+    createMachine<Ctx>({
+      context: {},
+      initial: 'foo',
+      states: {
+        foo: {
+          entry: [
+            choose([
+              {
+                cond: () => true,
+                actions: assign({
+                  // @ts-expect-error
+                  foo: ''
+                })
+              }
+            ]),
+            choose([
+              {
+                cond: () => true,
+                actions: [
+                  assign({
+                    // @ts-expect-error
+                    foo: ''
+                  })
+                ]
+              }
+            ])
+          ]
+        }
+      }
+    });
+  });
 });
 
 describe('sendParent', () => {

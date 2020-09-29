@@ -405,14 +405,24 @@ export function stop<TContext, TEvent extends EventObject>(
  *
  * @param assignment An object that represents the partial context to update.
  */
-export const assign = <TContext, TEvent extends EventObject = EventObject>(
-  assignment: Assigner<TContext, TEvent> | PropertyAssigner<TContext, TEvent>
+export const assign = <
+  TContext,
+  TEvent extends EventObject = EventObject,
+  TAssignment extends Assignment<TContext, TEvent> = Assignment<
+    TContext,
+    TEvent
+  >
+>(
+  assignment: TAssignment
 ): AssignAction<TContext, TEvent> => {
   return {
     type: actionTypes.assign,
     assignment
   };
 };
+type Assignment<TContext, TEvent extends EventObject> =
+  | Assigner<TContext, TEvent>
+  | PropertyAssigner<TContext, TEvent>;
 
 export function isActionObject<TContext, TEvent extends EventObject>(
   action: Action<TContext, TEvent>
