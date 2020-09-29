@@ -28,7 +28,8 @@ import {
   Observer,
   Spawnable,
   Typestate,
-  AnyEventObject
+  AnyEventObject,
+  LogActionObject
 } from './types';
 import { State, bindActionToState, isState } from './State';
 import * as actionTypes from './actionTypes';
@@ -883,12 +884,14 @@ export class Interpreter<
         break;
       }
       case actionTypes.stop: {
-        this.stopChild(action.activity.id);
+        this.stopChild(
+          (action as ActivityActionObject<TContext, TEvent>).activity.id
+        );
         break;
       }
 
       case actionTypes.log:
-        const { label, value } = action;
+        const { label, value } = action as LogActionObject<TContext, TEvent>;
 
         if (label) {
           this.logger(label, value);

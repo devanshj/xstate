@@ -1152,11 +1152,14 @@ class StateNode<
     const activities = currentState ? { ...currentState.activities } : {};
     for (const action of actions) {
       if (action.type === actionTypes.start) {
-        activities[
-          action.activity!.id || action.activity!.type
-        ] = action as ActivityDefinition<TContext, TEvent>;
+        const refinedAction = action as ActivityActionObject<TContext, TEvent>;
+        activities[refinedAction.activity.id || refinedAction.activity.type] =
+          refinedAction.activity;
       } else if (action.type === actionTypes.stop) {
-        activities[action.activity!.id || action.activity!.type] = false;
+        const refinedAction = action as ActivityActionObject<TContext, TEvent>;
+        activities[
+          refinedAction.activity.id || refinedAction.activity.type
+        ] = false;
       }
     }
 
